@@ -1,5 +1,5 @@
 {
-    "name": "makina/drupal_onlyoffice_preview",
+    "name": "makinacorpus/drupal-onlyoffice-preview",
     "description": "Onlyoffice preview field Module for Drupal 8/9",
     "type": "drupal-module",
     "license": "GPL-2.0+",
@@ -10,9 +10,9 @@
             "role": "Maintainer"
         }
     ],
-    "homepage": "https://drupal.org/project/example_project",
+    "homepage": "https://github.com/makinacorpus/drupal-onlyoffice-preview",
     "support": {
-        "issues": "https://drupal.org/project/issues/example_project",
-        "source": "https://git.drupalcode.org/project/example_project"
+        "issues": "https://github.com/makinacorpus/drupal-onlyoffice-preview/issues",
+        "source": "https://github.com/makinacorpus/drupal-onlyoffice-preview"
     }
 }

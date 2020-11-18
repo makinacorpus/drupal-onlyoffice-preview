@@ -11,7 +11,7 @@ use Drupal\Core\TypedData\DataDefinition;
  *
  * @FieldType(
  *   id = "onlyoffice_preview",
- *   label = @Translation("Onlyoffice document preview"),
+ *   label = @Translation("Onlyoffice preview"),
  *   default_formatter = "onlyoffice_preview_iframe",
  *   default_widget = "onlyoffice_preview_widget",
  * )
