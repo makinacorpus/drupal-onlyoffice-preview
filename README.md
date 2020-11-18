@@ -1,37 +1,35 @@
-# Onlyoffice Preview Field Module
+# Onlyoffice Preview Field Module for Drupal 8/9
 
-Onlyoffice Preview Field Module for Drupal 8/9
-
-**Note** : You will need your own [Onlyoffice server](https://www.onlyoffice.com/fr/) to use this module.
-This module add a field to
+**Note : You will need your own [Onlyoffice server](https://www.onlyoffice.com/fr/) to use this module.**
 
 The Onlyoffice Preview Field Module creates a simple field type that allow you to display document in iframe throw an Onlyoffice server.
 
 ## Installation
 
-Use composer :
+Download sources with composer:
+
 ```
-composer require makinacoprus/drupal-onlyoffice-preview
+composer require makinacorpus/drupal-onlyoffice-preview
+```
 
-## Configuration
+Install the module with drush:
 
-Visit `/admin/config/content/onlyoffice-preview` to configure the module.
+```
+bin/drush en onlyoffice_preview -y
+```
+
+Configure the module: visit `/admin/config/content/onlyoffice-preview` page.
+
+*You are now ready to add this field with any content/entity type !*
 
 ## Display mode
 
-The unique display mode for this field let choose some parameters :
+The unique display mode for this field let you choose some parameters :
 
- * Iframe width
- * Iframe height
- * Allow comments
- * Allow download
- * Allow edit
- * Allow print
- * Allow review
- * Hide right menu
- * Show chat
- * Show help
- * Allow plugins
+ * Iframe dimensions (width and height)
+ * Onlyoffice display/permission options:
+   * Allow comments, download, edit, print, review, plugins
+   * Hide/show right menu, chat, help
 
 ## Support
 
