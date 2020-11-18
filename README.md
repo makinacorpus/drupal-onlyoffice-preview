@@ -18,9 +18,15 @@ Install the module with drush:
 bin/drush en onlyoffice_preview -y
 ```
 
-Configure the module: visit `/admin/config/content/onlyoffice-preview` page.
+Configure the module: visit `/admin/config/content/onlyoffice-preview`
 
 *You are now ready to add this field with any content/entity type !*
+
+## Supported document types
+
+* Text : doc, docx, odt, pdf, docm, dot, dotm, dotx, epub, fodt, htm, html, mht, ott, rtf, txt, djvu, xp,
+* Spreadsheet : xls, xlsx, ods, csv, fods, ots, xlsm, xlt, xltm, xltx 
+* Presentation : ppt, pptx, odp, fodp, otp, pot, potm, potx, pps, ppsm, ppsx, pptm
 
 ## Display mode
 
@@ -33,4 +39,4 @@ The unique display mode for this field let you choose some parameters :
 
 ## Support
 
-Feel free to [open an issue ](https://github.com/makinacorpus/drupal-onlyoffice-preview/issues).
+Feel free to [open an issue](https://github.com/makinacorpus/drupal-onlyoffice-preview/issues).
