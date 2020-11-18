@@ -1,0 +1,6 @@
+onlyoffice.preview:
+  version: 1.x
+  js:
+    js/onlyoffice-preview.js: {}
+  dependencies:
+    - core/drupal

@@ -1,0 +1,6 @@
+name: 'Onlyoffice Preview Field Module'
+type: module
+description: 'Field to display a document in iframe via an Onlyoffice server'
+package: 'Makina'
+core_version_requirement: ^8 || ^9
+configure: onlyoffice_preview.settings

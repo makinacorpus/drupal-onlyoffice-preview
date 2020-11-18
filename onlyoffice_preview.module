@@ -1,0 +1,16 @@
+<?php
+
+function onlyoffice_preview_library_info_build() {
+
+  $config = \Drupal::config('onlyoffice_preview.settings');
+
+  if ($api_url = $config->get('api_url')) {
+    return [
+      'onlyoffice.api' => [
+        'js' => [
+          $api_url => ['type'=> 'external'],
+        ],
+      ],
+    ];
+  }
+}

@@ -1,0 +1,7 @@
+onlyoffice_preview.settings:
+  path: '/admin/config/content/onlyoffice-preview'
+  defaults:
+    _form: '\Drupal\onlyoffice_preview\Form\ConfigurationForm'
+    _title: 'Onlyoffice Preview Field settings'
+  requirements:
+    _permission: 'administer onlyoffice_preview'

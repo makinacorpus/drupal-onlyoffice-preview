@@ -1,0 +1,6 @@
+onlyoffice_preview.admin:
+  title: 'Onlyoffice Preview Field settings'
+  description: 'Configure Onlyoffice API url and error message.'
+  parent: system.admin_config_content
+  route_name: onlyoffice_preview.settings
+  weight: 100

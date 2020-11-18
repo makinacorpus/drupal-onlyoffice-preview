@@ -1,0 +1,37 @@
+field.formatter.settings.onlyoffice_preview_iframe:
+  type: mapping
+  label: 'Iframe settings'
+  mapping:
+    width:
+      type: text
+      label: 'Width'
+    height:
+      type: text
+      label: 'Height'
+    comment:
+      type: boolean
+      label: 'Comment'
+    download:
+      type: boolean
+      label: 'Download'
+    edit:
+      type: boolean
+      label: 'Edit'
+    print:
+      type: boolean
+      label: 'Print'
+    review:
+      type: boolean
+      label: 'Review'
+    hide_right_menu:
+      type: boolean
+      label: 'Hide right menu'
+    chat:
+      type: boolean
+      label: 'Chat'
+    help:
+      type: boolean
+      label: 'Help'
+    plugins:
+      type: boolean
+      label: 'Plugins'
