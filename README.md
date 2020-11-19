@@ -4,6 +4,8 @@
 
 The Onlyoffice Preview Field Module creates a simple field type that allow you to display document in iframe throw an Onlyoffice server.
 
+![preview](odt_example.png)
+
 ## Installation
 
 Download sources with composer:
@@ -25,7 +27,7 @@ Configure the module: visit `/admin/config/content/onlyoffice-preview`
 ## Supported document types
 
 * Text : doc, docx, odt, pdf, docm, dot, dotm, dotx, epub, fodt, htm, html, mht, ott, rtf, txt, djvu, xp,
-* Spreadsheet : xls, xlsx, ods, csv, fods, ots, xlsm, xlt, xltm, xltx 
+* Spreadsheet : xls, xlsx, ods, csv, fods, ots, xlsm, xlt, xltm, xltx
 * Presentation : ppt, pptx, odp, fodp, otp, pot, potm, potx, pps, ppsm, ppsx, pptm
 
 ## Display mode
