@@ -4,3 +4,4 @@ onlyoffice.preview:
     js/onlyoffice-preview.js: {}
   dependencies:
     - core/drupal
+    - core/jquery
