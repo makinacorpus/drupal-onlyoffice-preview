@@ -30,7 +30,10 @@ class ConfigurationForm extends ConfigFormBase {
       $form['api_url'] = [
         '#type' => 'url',
         '#title' => t('Onlyoffice server API URL'),
-        '#description' => t('The API JavaScript file can normally be found in the following editors folder: https://documentserver/web-apps/apps/api/documents/api.js'),
+        '#description' => t(<<<EOF
+        The API JavaScript file can normally be found in the following editors folder: https://documentserver/web-apps/apps/api/documents/api.js<br>
+        <strong>Note that if you update this value, you will probably need to empty Drupal cache to see your change effective.</strong>
+        EOF),
         '#default_value' => $config->get('api_url'),
         '#required' => true,
       ];
