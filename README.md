@@ -22,7 +22,7 @@ bin/drush en onlyoffice_preview -y
 
 Configure the module: visit `/admin/config/content/onlyoffice-preview`
 
-*You are now ready to add this field with any content/entity type !*
+**Congrats, *Onlyoffice preview field type* can now be used with any entity type !**
 
 ## Supported document types
 
