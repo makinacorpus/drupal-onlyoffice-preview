@@ -23,6 +23,8 @@ class OnlyofficePreviewWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    $element['#type'] = 'fieldset';
+
     $element['title'] =[
       '#type' => 'textfield',
       '#title' => t('Title'),
@@ -39,7 +41,7 @@ class OnlyofficePreviewWidget extends WidgetBase {
       '#type' => 'select',
       '#title' => t('Type'),
       '#options' => self::getExtensionOptions(),
-      '#default_value' => isset($items[$delta]->type) ? $items[$delta]->type : 0,
+      '#default_value' => isset($items[$delta]->type) ? $items[$delta]->type : '',
     ];
 
     return $element;
@@ -49,8 +51,8 @@ class OnlyofficePreviewWidget extends WidgetBase {
 
     return [
       'Text' => [
-        'doc' => 'doc',
         'docx' => 'docx',
+        'doc' => 'doc',
         'odt' => 'odt',
         'pdf' => 'pdf',
         'docm' => 'docm',
