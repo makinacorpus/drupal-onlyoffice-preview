@@ -2,7 +2,7 @@
 
 **Note : You will need your own [Onlyoffice server](https://www.onlyoffice.com/fr/) to use this module.**
 
-The Onlyoffice Preview Field Module creates a simple field type that allow you to display document in iframe throw an Onlyoffice server.
+The Onlyoffice Preview Field Module creates a simple field type that allow you to display document Media in iframe throw an Onlyoffice server.
 
 ![preview](odt_example.png)
 

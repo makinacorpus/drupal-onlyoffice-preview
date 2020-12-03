@@ -5,15 +5,17 @@ namespace Drupal\onlyoffice_preview\Plugin\Field\FieldFormatter;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\onlyoffice_preview\Plugin\Field\FieldWidget\OnlyofficePreviewWidget;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 
 /**
  * Plugin implementation of the 'onlyoffice_preview_iframe' formatter.
  *
  * @FieldFormatter(
  *   id = "onlyoffice_preview_iframe",
- *   label = @Translation("Iframe"),
+ *   label = @Translation("Onlyoffice preview"),
  *   field_types = {
  *     "onlyoffice_preview"
  *   }
@@ -60,54 +62,11 @@ class OnlyofficePreviewFormatter extends FormatterBase {
         $delta
       ));
 
-      // For further explanation on this config object, see: https://api.onlyoffice.com/editors/advanced
-      $config = [
-        "document" => [
-          "title" => $item->get('title')->getValue(),
-          "url" => $url = $item->get('url')->getValue(),
-          // For the key argument, onlyoffice documentation says :
-          // (see: https://api.onlyoffice.com/editors/config/document#key)
-          // "Defines the unique document identifier used for document recognition by the service.
-          // In case the known key is sent the document will be taken from the cache. Every time
-          // the document is edited and saved, the key must be generated anew. The document url can
-          // be used as the key but without the special characters and the length is limited to
-          // 128 symbols."
-          //
-          // In order to get the benefit of the onlyoffice server cache, we define a hash based on
-          // document url. It means that if we allow edition and the same document is shown
-          // in another entity, cached document will appear with hypothetical edition from another
-          // person on another entity.
-          // I'm not sure this is what we want. An other solution could be to generate an unique id based
-          // on parent entity uuid, field name and delta, but for now, we will let this like it is.
-          "key" => \hash('md5', $url),
-          "fileType" => $type = $item->get('type')->getValue(),
-          "permissions" => [
-            "comment" => (bool)$this->getSetting('comment'),
-            "download" => (bool)$this->getSetting('download'),
-            "edit" => (bool)$this->getSetting('edit'),
-            "print" => (bool)$this->getSetting('print'),
-            "review" => (bool)$this->getSetting('review'),
-          ],
-        ],
-        "documentType" => $this->getDocumentType($type),
-        "editorConfig" => [
-          "callbackUrl" => \urlencode(\sprintf("//%s/url-to-callback.ashx", \base_path())),
-          "customization" => [
-            "comments" => (bool)$this->getSetting('comment'),
-            "hideRightMenu" => (bool)$this->getSetting('hide_right_menu'),
-            "chat" => (bool)$this->getSetting('chat'),
-            "help" => (bool)$this->getSetting('help'),
-            "plugins" => (bool)$this->getSetting('plugins'),
-          ],
-        ],
-        "height" => $this->getSetting('height'),
-        "width" => $this->getSetting('width'),
-      ];
-
       $element[$delta] = ['#markup' => \sprintf('<div id="%s" class="onlyoffice-preview-placeholder"></div>', $placeholder_id)];
+
       $element['#attached']['drupalSettings']['onlyofficePreview']['documents'][] = [
         'placeholder' => $placeholder_id,
-        'config' => $config,
+        'config' => $this->buildConfig($item),
       ];
     }
 
@@ -210,13 +169,115 @@ class OnlyofficePreviewFormatter extends FormatterBase {
     ];
   }
 
-  private function getDocumentType(string $type) {
-    foreach (OnlyofficePreviewWidget::getExtensionOptions(true) as $documentType => $types) {
-      if (\in_array($type, $types)) {
-        return \strtolower($documentType);
+  /**
+   * For further explanation on this config array, see: https://api.onlyoffice.com/editors/advanced
+   */
+  private function buildConfig(FieldItemInterface $item): array {
+
+    $media = Media::load($item->get('target_id')->getValue());
+    $fid = $media->getSource()->getSourceFieldValue($media);
+
+    $file = File::load($fid);
+
+    return [
+      "document" => [
+        "title" => $item->get('title')->getValue(),
+        "url" => $url = $file->url(),
+        "fileType" => $type = $this->getDocumentExtension($file),
+        // For the key argument, onlyoffice documentation says :
+        // (see: https://api.onlyoffice.com/editors/config/document#key)
+        // "Defines the unique document identifier used for document recognition by the service.
+        // In case the known key is sent the document will be taken from the cache. Every time
+        // the document is edited and saved, the key must be generated anew. The document url can
+        // be used as the key but without the special characters and the length is limited to
+        // 128 symbols."
+        //
+        // In order to get the benefit of the onlyoffice server cache, we define a hash based on
+        // document url. It means that if we allow edition and the same document is shown
+        // in another entity, cached document will appear with hypothetical edition from another
+        // person on another entity.
+        // I'm not sure this is what we want. An other solution could be to generate an unique id based
+        // on parent entity uuid, field name and delta, but for now, we will let this like it is.
+        "key" => \hash('md5', $url),
+        "permissions" => [
+          "comment" => (bool)$this->getSetting('comment'),
+          "download" => (bool)$this->getSetting('download'),
+          "edit" => (bool)$this->getSetting('edit'),
+          "print" => (bool)$this->getSetting('print'),
+          "review" => (bool)$this->getSetting('review'),
+        ],
+      ],
+      "documentType" => $this->getDocumentType($type),
+      "editorConfig" => [
+        "callbackUrl" => \urlencode(\sprintf("//%s/url-to-callback.ashx", \base_path())),
+        "customization" => [
+          "comments" => (bool)$this->getSetting('comment'),
+          "hideRightMenu" => (bool)$this->getSetting('hide_right_menu'),
+          "chat" => (bool)$this->getSetting('chat'),
+          "help" => (bool)$this->getSetting('help'),
+          "plugins" => (bool)$this->getSetting('plugins'),
+        ],
+      ],
+      "height" => $this->getSetting('height'),
+      "width" => $this->getSetting('width'),
+    ];
+  }
+
+  private function getDocumentType(string $extension) {
+    foreach ($this->getExtensionOptions() as $documentType => $types) {
+      if (\in_array($extension, $types)) {
+        return $documentType;
       }
     }
 
     return null;
+  }
+
+  private function getDocumentExtension(File $file): ?string {
+
+    $map = [
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+      'application/msword' => 'doc',
+      'application/vnd.oasis.opendocument.text' => 'odt',
+      'application/pdf' => 'pdf',
+      'application/vnd.ms-word.document.macroenabled.12' => 'docm',
+      'application/vnd.ms-word.template.macroenabled.12' => 'dotm',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.template' => 'dotx',
+      'application/epub+zip' => 'epub',
+      'text/html' => 'html',
+      'application/vnd.oasis.opendocument.text-template' => 'ott',
+      'application/rtf' => 'rtf',
+      'text/plain' => 'txt',
+      'image/vnd.djvu' => 'djvu',
+      'application/vnd.ms-xpsdocument' => 'xps',
+      'application/vnd.ms-excel' => 'xls',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+      'application/vnd.oasis.opendocument.spreadsheet' => 'ods',
+      'text/csv' => 'csv',
+      'application/vnd.oasis.opendocument.spreadsheet-template' => 'ots',
+      'application/vnd.ms-excel.sheet.macroenabled.12' => 'xlsm',
+      'application/vnd.ms-excel' => 'xlt',
+      'application/vnd.ms-excel.template.macroenabled.12' => 'xltm',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.template' => 'xltx',
+      'application/vnd.ms-powerpoint' => 'ppt',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
+      'application/vnd.oasis.opendocument.presentation' => 'odp',
+      'application/vnd.oasis.opendocument.presentation-template' => 'otp',
+      'application/vnd.ms-powerpoint.template.macroenabled.12' => 'potm',
+      'application/vnd.openxmlformats-officedocument.presentationml.template' => 'potx',
+      'application/vnd.ms-powerpoint.slideshow.macroenabled.12' => 'ppsm',
+      'application/vnd.openxmlformats-officedocument.presentationml.slideshow' => 'ppsx',
+      'application/vnd.ms-powerpoint.presentation.macroenabled.12' => 'pptm',
+    ];
+
+    return $map[$file->getMimeType()] ?? '';
+  }
+
+  public static function getExtensionOptions() {
+    return [
+      'text' => ['docx', 'doc', 'odt', 'pdf', 'docm', 'dot', 'dotm', 'dotx', 'epub', 'fodt', 'htm', 'html', 'mht', 'ott', 'rtf', 'txt', 'djvu', 'xps'],
+      'spreadsheet' => ['xls', 'xlsx', 'ods', 'csv', 'fods', 'ots', 'xlsm', 'xlt', 'xltm', 'xltx'],
+      'presentation' => ['ppt', 'pptx', 'odp', 'fodp', 'otp', 'pot', 'potm', 'potx', 'pps', 'ppsm', 'ppsx', 'pptm'],
+    ];
   }
 }

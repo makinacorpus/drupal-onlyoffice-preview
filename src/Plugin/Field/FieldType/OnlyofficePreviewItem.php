@@ -2,8 +2,9 @@
 
 namespace Drupal\onlyoffice_preview\Plugin\Field\FieldType;
 
-use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\TypedData\DataDefinition;
 
 /**
@@ -16,56 +17,53 @@ use Drupal\Core\TypedData\DataDefinition;
  *   default_widget = "onlyoffice_preview_widget",
  * )
  */
-class OnlyofficePreviewItem extends FieldItemBase {
+class OnlyofficePreviewItem extends EntityReferenceItem {
 
   /**
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    return [
-      'columns' => [
-        'title' => [
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => true,
-        ],
-        'url' => [
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => true,
-        ],
-        'type' => [
-          'type' => 'varchar',
-          'length' => 50,
-          'not null' => true,
-        ],
-      ],
+    $schema = parent::schema($field_definition);
+
+    $schema['columns']['title'] = [
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => true,
     ];
+
+    return $schema;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+
+    $properties = parent::propertyDefinitions($field_definition);
+
+    $properties['title'] = DataDefinition::create('string')->setLabel(t('Title'));
+
+    return $properties;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultStorageSettings() {
     return [
-      'title' => DataDefinition::create('string')->setLabel(t('Title')),
-      'url' => DataDefinition::create('string')->setLabel(t('Document URL')),
-      'type' => DataDefinition::create('string')->setLabel(t('Document type')),
-    ];
+      'target_type' => 'media',
+    ] + parent::defaultStorageSettings();
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function mainPropertyName() {
-    return 'url';
-  }
+  public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
 
-  /**
-   * {@inheritdoc}
-   */
-  public function isEmpty() {
-    $value = $this->get('url')->getValue();
-    return $value === null || $value === '';
+    $element = parent::storageSettingsForm($form, $form_state, $has_data);
+
+    $element['target_type']['#disabled'] = true;
+
+    return $element;
   }
 }
