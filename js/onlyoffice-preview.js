@@ -12,7 +12,7 @@
             var documentLink = document.createElement("a");
             documentLink.appendChild(document.createTextNode(documentConfig.config.document.title));
             documentLink.href = documentConfig.config.document.url;
-            errorMessage.classList.add("onlyoffice-preview-link");
+            documentLink.classList.add("onlyoffice-preview-link");
             document.getElementById(documentConfig.placeholder).appendChild(documentLink);
 
             var errorMessage = document.createElement("p");
